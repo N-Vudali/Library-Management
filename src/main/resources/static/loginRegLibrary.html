@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Managment</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/commonStyle.css">
+    <script src="loginRegLibrary.js"></script>
+    <style>
+        .bg-img-cls {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .full-height-cls {
+            height: 100%;
+        }
+
+        .login-form-div-cls {
+            padding-top: 9%;
+        }
+
+        .login-form-cls {
+            padding: 10px;
+            border-radius: 9px;
+        }
+
+        .text-navyblue {
+            color: #03132e;
+        }
+
+        .bg-navyblue {
+            background-color: #03132e;
+        }
+    </style>
+</head>
+
+<body style="height: 100%;">
+    <div class="container row col-md-12" style="height: 100%;">
+        <div class="col-md-8 p-0">
+            <img src="./wallLog.jpg" alt="" style="width: 100%;height: 100%;">
+        </div>
+        <div class="col-md-4 mt-5">
+            <div class="col-md-8 p-0">
+                <img src="./logo.png" alt="" style="width: 25%;height: 100%;">
+            </div>
+            <form class="shadow login-form-cls bg-white">
+                <div class="form-group">
+                    <label for="email"><i class="fa fa-envelope"></i> Email</label>
+                    <input type="email" class="form-control" id="emailId" placeholder="" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="pwd"><i class="fa fa-key"></i> Password</label>
+                    <input type="password" class="form-control" id="pwdId" placeholder="" name="pswd">
+                </div>
+                <button type="button" class="btn btn-warning btn-block text-white" onclick="loginUser()">Login</button>
+                <div class="form-group mt-2" style="text-align: center;">
+                    <label class="form-check-label">
+                        Don't have an account ? <a type="button" class="text-warning" data-toggle="modal"
+                            data-target="#regModelId">Register Here</a>
+                    </label>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Registration Model -->
+    <div class="modal fade" id="regModelId">
+        <div class="modal-dialog" style="max-width: 750px!important;">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header bg-warning">
+                    <h4 class="modal-title text-white">Registration</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form>
+                        <h4>Basic Details</h4>
+                        <hr>
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="userNameId">Name</label>
+                                <input type="text" class="form-control" id="userNameId" placeholder="Enter Name"
+                                    value="" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="contactId">Contact no.</label>
+                                <input type="number" class="form-control" id="contactId" placeholder="Enter Contact no."
+                                    required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="emailId">Email</label>
+                                <input type="email" class="form-control" id="userEmailId" value=""
+                                    placeholder="Enter Email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="passwordId">Create Password</label>
+                                <input type="password" class="form-control" id="passwordId" placeholder="Enter Password"
+                                    required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="addressId">Address</label>
+                                <textarea id="addressId" class="form-control"></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="validationDefaultUsername">Gender</label>
+                                <div class="form-check">
+                                    <label class="form-check-label" for="maleId">
+                                        <input type="radio" class="form-check-input" id="maleId" name="genderRadio"
+                                            value="M">Male
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <label class="form-check-label" for="femaleId">
+                                        <input type="radio" class="form-check-input" id="femaleId" name="genderRadio"
+                                            value="F">Female
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <label class="form-check-label" for="otherId">
+                                        <input type="radio" class="form-check-input" id="otherId" name="genderRadio"
+                                            value="O">Other
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationDefaultUsername">User Type</label>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" id="maleId"
+                                                name="userTypeRadio" value="Librarian">Librarian
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label" for="femaleId">
+                                            <input type="radio" class="form-check-input" id="femaleId"
+                                                name="userTypeRadio" value="Student">Student
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="studentId">
+                            <h4>Student Details</h4>
+                            <hr>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Parents Name</label>
+                                    <input type="text" class="form-control" id="parentsNameId"
+                                        placeholder="Enter Parents Name" value="" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Student Registration no.</label>
+                                    <input type="text" class="form-control" id="stdRegNo"
+                                        placeholder="Enter Registration no." value="" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Department</label>
+                                    <input type="text" class="form-control" id="departmenId"
+                                        placeholder="Enter Department" value="" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="librarianDivId">
+                            <h4>Librarian Details</h4>
+                            <hr>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Employee Registration no.</label>
+                                    <input type="text" class="form-control" id="empRegNo"
+                                        placeholder="Employee Registration no." value="" required>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="reset" class="border btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="button" class="border btn btn-warning text-white"
+                        onclick="registerUser()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

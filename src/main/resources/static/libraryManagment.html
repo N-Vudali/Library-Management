@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<title>Library Managment</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="./libraryManagment.js"></script>
+<style>
+    .bg-img {
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background: url(backwal.jpg);
+        background-size: cover;
+    }
+</style>
+
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="onload();" class="bg-img">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #515526;">
+        <img src="./logo.png" alt="" style="height: 54px;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active menuCls" id="menuTabId" menuType="MENU">
+                    <a class="nav-link" href="#" ng-click="switchMenu('MENU','menuTabId')">View Books</a>
+                </li>
+                <li ng-if="userName !='LIBRARIAN'" class="nav-item menuCls" menuType="PAYMENT" id="billingTabId">
+                    <a class="nav-link" href="#" ng-click="switchMenu('PAYMENT','billingTabId')">Payment</a>
+                </li>
+                <li class="nav-item menuCls" menuType="HISTORY" id="orderHistoryTabId">
+                    <a class="nav-link" href="#" ng-click="switchMenu('HISTORY','orderHistoryTabId')">View Borrowing
+                        Details</a>
+                </li>
+                <li class="nav-item menuCls" ng-if="userName =='LIBRARIAN'" menuType="STUDENT_DETAILS"
+                    id="studentDetailsTabId">
+                    <a class="nav-link" href="#" ng-click="switchMenu('STUDENT_DETAILS','studentDetailsTabId')">Student
+                        Details</a>
+                </li>
+            </ul>
+            <span class="navbar-text" style="cursor: pointer;">
+                <i class="fa fa-sign-out" style="font-size: 20px;" ng-click="logout()">Logout</i>
+            </span>
+        </div>
+    </nav>
+    <div id="viewBookDivId" style="margin: 12px 12px 0 12px;">
+        <button ng-if="userName =='LIBRARIAN'" type="button" class="border btn-small btn-warning rounded mb-3"
+            data-toggle="modal" ng-click="addBookModel()" data-target="#bookAddModelId">Add New
+            Book</button>
+        <div class="row">
+            <table class="table">
+                <thead class="text-white">
+                    <tr>
+                        <th scope="col">Book Name</th>
+                        <th scope="col">Author Name</th>
+                        <th scope="col">Year of Publish</th>
+                        <th scope="col">Book Id</th>
+                        <th scope="col">Price/Day</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="data in bookList">
+                        <td scope="col" class="text-white">{{data.title}}</td>
+                        <td scope="col" class="text-white">{{data.authorNameId}}</td>
+                        <td scope="col" class="text-white">{{data.yop}}</td>
+                        <td scope="col" class="text-white">{{data.bookLibraryId}}</td>
+                        <td scope="col" class="text-white">{{data.price}}</td>
+                        <td scope="col" class="text-white">
+                            <button ng-if="userName !='LIBRARIAN'" ng-click="placeOrder(data)"
+                                class="btn btn-small bg-warning" data-toggle="modal"
+                                data-target="#barrowBookModelId">Barrow Now</button>
+                            <button title="Edit" ng-if="userName =='LIBRARIAN'" ng-click="editBookModel(data)"
+                                class="btn btn-small btn-warning" data-toggle="modal" data-target="#bookAddModelId"><i
+                                    class="fa fa-edit"></i></button>
+                            <button title="Remove" ng-if="userName =='LIBRARIAN'" ng-click="removeBook(data)"
+                                class="btn btn-small btn-warning"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--Barrow Book Modal -->
+        <div class="modal fade" id="barrowBookModelId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-warning">
+                        <h4 class="modal-title text-white">Barrow Book</h4>
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <strong class="text-navyblue">Book Name :
+                                    </strong><span>{{selectedBookDetails.title}}</span><br>
+                                    <strong class="text-navyblue">Price :
+                                    </strong><span>{{selectedBookDetails.price}}</span><br>
+                                    <div class="col-md-12 mb-3">
+                                        <label for="noOfDays">No. of days want to barrow</label>
+                                        <input type="number" class="form-control" id="noOfDays"
+                                            ng-keyup="totalBarrowCost()">
+                                        <input type="hidden" value="{{selectedBookDetails.price}}" id="priceId">
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Booking Date</label>
+                                        <input type="date" class="form-control" id="bookingDateId">
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Price</label>
+                                        <input type="text" class="form-control" id="barrowCostId" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="reset" class="border btn btn-light" data-dismiss="modal">Close</button>
+                        <button type="button" class="border btn bg-warning" ng-click="barrowBook()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  Add Book  -->
+    <div class="modal fade" id="bookAddModelId">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header bg-warning">
+                    <h4 class="modal-title text-white">{{modelTitle}}</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form class="mt-3">
+                        <div class="form-group">
+                            <label>Enter Book Name</label>
+                            <input type="text" class="form-control" id="bookNameId" placeholder="Enter Book Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Enter Author Name</label>
+                            <input type="text" class="form-control" id="authorNameId" placeholder="Enter Author Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Year of Publish</label>
+                            <input type="date" class="form-control" id="yop" placeholder="Year of Publish">
+                        </div>
+                        <div class="form-group">
+                            <label>Enter Book Id</label>
+                            <input type="number" class="form-control" id="bookLibraryId" placeholder="Enter Book Id">
+                        </div>
+                        <div class="form-group">
+                            <label>Enter Price</label>
+                            <input type="number" class="form-control" id="pricePerDayId" placeholder="Enter Price">
+                        </div>
+
+                        <!-- <div class="custom-file col-md-12 mb-3" id="customFile" lang="es">
+                            <input type="file" class="custom-file-input" id="bookImgId" aria-describedby="fileHelp">
+                            <label class="custom-file-label" for="bookImgId">
+                                Upload Book Photo
+                            </label>
+                        </div> -->
+                    </form>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="reset" class="border btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="button" class="border btn bg-warning" ng-click="addEditBook()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- End -->
+    <div class="col-md-12" id="biilingId">
+        <table class="table">
+            <thead class="text-white">
+                <tr>
+                    <th scope="col">Book Name</th>
+                    <th scope="col">Author Name</th>
+                    <th scope="col">Number of Days</th>
+                    <th scope="col">Barrow Date</th>
+                    <th scope="col">Total Cost</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Return</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="data in viewOrderTableData">
+                    <td scope="col" class="text-white">{{data.title}}</td>
+                    <td scope="col" class="text-white">{{data.authorNameId}}</td>
+                    <td scope="col" class="text-white">{{data.noOfDays}}</td>
+                    <td scope="col" class="text-white">{{data.bookingDate}}</td>
+                    <td scope="col" class="text-white">{{data.cost}}</td>
+                    <td scope="col" class="text-white">
+                        <button ng-show="data.status == 'pending'" type="button"
+                            class="border btn-small bg-warning rounded" ng-click="getOrderData(data)"
+                            data-toggle="modal" data-target="#processToPayModalId">Pay</button>
+                        <span ng-show="data.status != 'pending'">{{data.status}}</span>
+                    </td>
+                    <td scope="col" class="text-white">
+                        <button ng-show="data.return == 'pending' && userName =='LIBRARIAN'" type="button"
+                            class="border btn-small bg-warning rounded" ng-click="returnBook(data)">Return</button>
+                        <span ng-show="data.return != 'pending'">{{data.return}}</span>
+                        <span ng-show="data.return == 'pending'&& userName =='STUDENT'">{{data.return}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- process to pay -->
+        <div class="modal fade" id="processToPayModalId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-warning">
+                        <h4 class="modal-title text-white">Process to pay</h4>
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="ammountId">Ammount</label>
+                                    <input type="text" class="form-control" id="ammountId" value="" readonly>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="paymentModeId">Payment Mode</label>
+                                    <select class="form-control" id="paymentModeId">
+                                        <option value="">Select</option>
+                                        <option value="Cash Payment">Cash</option>
+                                        <option value="Credit Card Payment">Credit Card</option>
+                                        <option value="Debit Card Payment">Debit Card</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="reset" class="border btn btn-light" data-dismiss="modal">Close</button>
+                        <button type="button" class="border btn bg-warning" ng-click="payBill()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12" id="studentDetilsId">
+        <table class="table">
+            <thead class="text-white">
+                <tr>
+                    <th scope="col">Student Name</th>
+                    <th scope="col">Contact No.</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Parents Name</th>
+                    <th scope="col">Student Reg no.</th>
+                    <th scope="col">Department</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="data in studentDetails">
+                    <td scope="col" class="text-white">{{data.memberName}}</td>
+                    <td scope="col" class="text-white">{{data.contactNum}}</td>
+                    <td scope="col" class="text-white">{{data.gender}}</td>
+                    <td scope="col" class="text-white">{{data.emailId}}</td>
+                    <td scope="col" class="text-white">{{data.parentsName}}</td>
+                    <td scope="col" class="text-white">{{data.studentRegNo}}</td>
+                    <td scope="col" class="text-white">{{data.departmenId}}</td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
